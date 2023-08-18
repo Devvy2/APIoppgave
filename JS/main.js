@@ -6,23 +6,49 @@
 
 const fetchPokemon = async () => {
   try {
-    const url = `https://pokeapi.co/api/v2/pokemon/1`;
-    const res = await fetch(url);
-    const data = await res.json();
+    const container = document.getElementById("pokemonContainer");
 
-    const nameElement = document.getElementById("pokemonName");
-    const idElement = document.getElementById("pokemonId");
-    const imageElement = document.getElementById("pokemonImage");
+    for (let i = 1; i <= 20; i++) {
+      const url = `https://pokeapi.co/api/v2/pokemon/${i}`;
+      const res = await fetch(url);
+      const data = await res.json();
 
-    nameElement.textContent = `Name: ${data.name}`;
-    idElement.textContent = `ID: ${data.id}`;
-    imageElement.src = data.sprites.other["official-artwork"].front_default;
-    console.log(imageElement);
-    imageElement.alt = `Image of ${data.name}`;
+      renderPokemon(container, data);
+    }
   } catch (error) {
     console.error("error fetching pokemon data", error);
   }
 };
 
-console.log(fetchPokemon);
+async function renderPokemon(container, data) {
+  const pokemonDiv = document.createElement("div");
+  pokemonDiv.className = "pokemon-card";
+
+  const imageElement = document.createElement("img");
+  imageElement.src = data.sprites.other["official-artwork"].front_default;
+  imageElement.alt = `Image of ${data.name}`;
+
+  const nameElement = document.createElement("p");
+  nameElement.textContent = `Name: ${
+    data.name.charAt(0).toUpperCase() + data.name.slice(1)
+  }`;
+
+  const idElement = document.createElement("p");
+  idElement.textContent = `ID: ${data.id}`;
+
+  const typeElement = document.createElement("p");
+  typeElement.textContent = `Type: ${data.types
+    .map((type) => type.type.name)
+    .join(", ")}`;
+
+  pokemonDiv.appendChild(imageElement);
+  pokemonDiv.appendChild(nameElement);
+  pokemonDiv.appendChild(idElement);
+  pokemonDiv.appendChild(typeElement);
+
+  console.log(typeElement);
+
+  container.appendChild(pokemonDiv);
+}
+
 fetchPokemon();
