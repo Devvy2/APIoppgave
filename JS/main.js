@@ -1,13 +1,17 @@
+const searchInput = document.querySelector("#search-pokemon");
+const container = document.getElementById("pokemonContainer");
+let allPokemonData = [];
+
 const fetchPokemon = async () => {
   try {
-    const container = document.getElementById("pokemonContainer");
-
     for (let i = 1; i <= 20; i++) {
       const url = `https://pokeapi.co/api/v2/pokemon/${i}`;
       const res = await fetch(url);
       const data = await res.json();
 
       renderPokemon(container, data);
+
+      allPokemonData.push(data);
     }
   } catch (error) {
     console.error("error fetching pokemon data", error);
@@ -47,7 +51,6 @@ async function renderPokemon(container, data) {
   pokemonDiv.appendChild(idElement);
   pokemonDiv.appendChild(typeElement);
   pokemonDiv.appendChild(pokemonDetails);
-
   container.appendChild(pokemonDiv);
 }
 
@@ -61,39 +64,58 @@ function showPokemonDetailsModal(data) {
     document.body.removeChild(modal);
   });
 
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      document.body.removeChild(modal);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      document.body.removeChild(modal);
+    }
+  });
+
   const detailsElement = document.createElement("div");
   detailsElement.className = "pokemon-details";
 
   detailsElement.innerHTML = `
-    <h2>${data.name.toUpperCase()}</h2>
-    <img src="${
-      data.sprites.other["official-artwork"].front_default
-    }" alt="Image of ${data.name}">
-    <p id="pokemon-id">ID: ${data.id}</p>
-    <p id="pokemon-hp">HP: ${
-      data.stats.find((stat) => stat.stat.name === "hp").base_stat
-    }</p>
-    <p id="pokemon-attack">Attack: ${
-      data.stats.find((stat) => stat.stat.name === "attack").base_stat
-    }</p>
-    </p>
-     <p id="pokemon-special-attack">Special-attack: ${
-       data.stats.find((stat) => stat.stat.name === "special-attack").base_stat
-     }</p>
-    <p id="pokemon-defense">Defense: ${
-      data.stats.find((stat) => stat.stat.name === "defense").base_stat
-    }
-      <p id="pokemon-special-defense">Special-defense: ${
-        data.stats.find((stat) => stat.stat.name === "special-defense")
-          .base_stat
-      }</p>
-      <p id="pokemon-speed">Speed: ${
-        data.stats.find((stat) => stat.stat.name === "speed").base_stat
-      }</p>
-    <p>Type: ${data.types.map((type) => type.type.name).join(", ")}</p>
-  `;
+        <h2>${data.name.toUpperCase()}</h2>
+      
+        <img src="${
+          data.sprites.other["official-artwork"].front_default
+        }" alt="Image of ${data.name}">
+      
+        <p id="pokemon-id">ID: ${data.id}</p>
+        
+        <p id="pokemon-hp">HP: ${
+          data.stats.find((stat) => stat.stat.name === "hp").base_stat
+        }</p>
 
-  // Create and append details about the Pokemon to detailsElement
+        <p id="pokemon-attack">Attack: ${
+          data.stats.find((stat) => stat.stat.name === "attack").base_stat
+        }</p>
+      
+        <p id="pokemon-special-attack">Special-attack: ${
+          data.stats.find((stat) => stat.stat.name === "special-attack")
+            .base_stat
+        }</p>
+
+        <p id="pokemon-defense">Defense: ${
+          data.stats.find((stat) => stat.stat.name === "defense").base_stat
+        }</p>
+        
+        <p id="pokemon-special-defense">Special-defense: ${
+          data.stats.find((stat) => stat.stat.name === "special-defense")
+            .base_stat
+        }</p>
+
+        <p id="pokemon-speed">Speed: ${
+          data.stats.find((stat) => stat.stat.name === "speed").base_stat
+        }</p>
+
+        <p>Type: ${data.types.map((type) => type.type.name).join(", ")}</p>
+        `;
 
   detailsElement.appendChild(closeModalButton);
   modal.appendChild(detailsElement);
@@ -102,3 +124,28 @@ function showPokemonDetailsModal(data) {
 }
 
 fetchPokemon();
+
+function searchPokemon(query, container) {
+  const filteredPokemon = allPokemonData.filter((pokemon) =>
+    pokemon.name.includes(query.toLowerCase())
+  );
+  renderFilteredPokemon(filteredPokemon, container);
+}
+
+function renderFilteredPokemon(filteredPokemon, container) {
+  container.innerHTML = "";
+
+  filteredPokemon.forEach((pokemon) => {
+    renderPokemon(container, pokemon);
+  });
+}
+
+document.querySelector("form").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const query = searchInput.value.toLowerCase();
+  if (query) {
+    searchPokemon(query, container);
+  } else {
+    renderFilteredPokemon(allPokemonData, container);
+  }
+});
