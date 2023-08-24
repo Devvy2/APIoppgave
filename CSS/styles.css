@@ -115,7 +115,18 @@ form {
 
 #submit-pokemon {
   height: 30px;
-  background-color: blue;
+  background-color: rgb(33, 200, 53);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+#home-btn {
+  background-color: rgb(35, 129, 223);
+  height: 30px;
   color: white;
   border: none;
   border-radius: 5px;
@@ -131,5 +142,9 @@ form {
 }
 
 #submit-pokemon:hover {
-  background-color: #0058a3;
+  background-color: #0f6e17;
+}
+
+#home-btn:hover {
+  background-color: rgb(24, 85, 146);
 }

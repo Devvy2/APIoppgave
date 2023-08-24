@@ -149,3 +149,8 @@ document.querySelector("form").addEventListener("submit", function (e) {
     renderFilteredPokemon(allPokemonData, container);
   }
 });
+
+document.querySelector("form").addEventListener("reset", function () {
+  document.getElementById("search-pokemon").value = "";
+  renderFilteredPokemon(allPokemonData, container);
+});
