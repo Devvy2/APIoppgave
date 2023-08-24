@@ -1,5 +1,6 @@
 const searchInput = document.querySelector("#search-pokemon");
 const container = document.getElementById("pokemonContainer");
+const errorMessage = document.getElementById("error-message");
 let allPokemonData = [];
 
 const fetchPokemon = async () => {
@@ -153,4 +154,23 @@ document.querySelector("form").addEventListener("submit", function (e) {
 document.querySelector("form").addEventListener("reset", function () {
   document.getElementById("search-pokemon").value = "";
   renderFilteredPokemon(allPokemonData, container);
+});
+
+document.querySelector("form").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const query = searchInput.value.toLowerCase();
+  if (query) {
+    const filteredPokemon = allPokemonData.filter((pokemon) =>
+      pokemon.name.includes(query)
+    );
+    if (filteredPokemon.length > 0) {
+      errorMessage.textContent = "";
+      renderFilteredPokemon(filteredPokemon, container);
+    } else {
+      errorMessage.textContent = "No matching Pokemon found";
+    }
+  } else {
+    errorMessage.textContent = "";
+    renderFilteredPokemon(allPokemonData, container);
+  }
 });
