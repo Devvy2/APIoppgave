@@ -1,8 +1,11 @@
+// Get references to various elements in the HTML document
 const searchInput = document.querySelector("#search-pokemon");
 const container = document.getElementById("pokemonContainer");
 const errorMessage = document.getElementById("error-message");
 let allPokemonData = [];
 
+// Fetch Pokemon data from the API
+// Loop through Pokemon IDs from 1 to 120
 const fetchPokemon = async () => {
   try {
     for (let i = 1; i <= 120; i++) {
@@ -19,6 +22,7 @@ const fetchPokemon = async () => {
   }
 };
 
+// Render a Pokemon card with its data
 async function renderPokemon(container, data) {
   const pokemonDiv = document.createElement("div");
   pokemonDiv.className = "pokemon-card";
@@ -55,6 +59,7 @@ async function renderPokemon(container, data) {
   container.appendChild(pokemonDiv);
 }
 
+// Show a modal with detailed Pokemon information
 function showPokemonDetailsModal(data) {
   const modal = document.createElement("div");
   modal.className = "modal";
@@ -77,9 +82,11 @@ function showPokemonDetailsModal(data) {
     }
   });
 
+  // Create Pokemon details container
   const detailsElement = document.createElement("div");
   detailsElement.className = "pokemon-details";
 
+  // Fill details with data
   detailsElement.innerHTML = `
         <h2>${data.name.toUpperCase()}</h2>
       
@@ -124,6 +131,7 @@ function showPokemonDetailsModal(data) {
   document.body.appendChild(modal);
 }
 
+// Search for Pokemon based on the query and render results
 function searchPokemon(query, container) {
   const filteredPokemon = allPokemonData.filter((pokemon) =>
     pokemon.name.includes(query.toLowerCase())
@@ -131,6 +139,7 @@ function searchPokemon(query, container) {
   renderFilteredPokemon(filteredPokemon, container);
 }
 
+// Render filtered Pokemon based on search results
 function renderFilteredPokemon(filteredPokemon, container) {
   container.innerHTML = "";
 
@@ -139,6 +148,9 @@ function renderFilteredPokemon(filteredPokemon, container) {
   });
 }
 
+// Handle form submission for search
+// Search and render filtered Pokemon
+// If no query, render all Pokemon
 document.querySelector("form").addEventListener("submit", function (e) {
   e.preventDefault();
   const query = searchInput.value.toLowerCase();
@@ -149,11 +161,14 @@ document.querySelector("form").addEventListener("submit", function (e) {
   }
 });
 
+// Handle form reset
+// Clear search input and render all Pokemon
 document.querySelector("form").addEventListener("reset", function () {
   document.getElementById("search-pokemon").value = "";
   renderFilteredPokemon(allPokemonData, container);
 });
 
+// Handle form submission for search with error message
 document.querySelector("form").addEventListener("submit", function (e) {
   e.preventDefault();
   const query = searchInput.value.toLowerCase();
@@ -205,6 +220,7 @@ function generateSortButtons() {
   });
 }
 
+// Fetch Pokemon data and generate sort buttons after fetching
 fetchPokemon().then(() => {
   generateSortButtons();
 });
