@@ -5,7 +5,7 @@ let allPokemonData = [];
 
 const fetchPokemon = async () => {
   try {
-    for (let i = 1; i <= 20; i++) {
+    for (let i = 1; i <= 120; i++) {
       const url = `https://pokeapi.co/api/v2/pokemon/${i}`;
       const res = await fetch(url);
       const data = await res.json();
@@ -124,8 +124,6 @@ function showPokemonDetailsModal(data) {
   document.body.appendChild(modal);
 }
 
-fetchPokemon();
-
 function searchPokemon(query, container) {
   const filteredPokemon = allPokemonData.filter((pokemon) =>
     pokemon.name.includes(query.toLowerCase())
@@ -173,4 +171,40 @@ document.querySelector("form").addEventListener("submit", function (e) {
     errorMessage.textContent = "";
     renderFilteredPokemon(allPokemonData, container);
   }
+});
+
+// Function to generate and add sort buttons
+function generateSortButtons() {
+  const sortOptionsContainer = document.getElementById("sort-options");
+
+  function sortPokemonByType(type) {
+    const filteredPokemon = allPokemonData.filter((pokemon) =>
+      pokemon.types.some((t) => t.type.name === type)
+    );
+    renderFilteredPokemon(filteredPokemon, container);
+  }
+
+  // Collect unique Pokémon types from the fetched data
+  const pokemonTypes = new Set();
+  allPokemonData.forEach((pokemon) => {
+    pokemon.types.forEach((type) => {
+      pokemonTypes.add(type.type.name);
+    });
+  });
+
+  // Convert the set to an array and sort it
+  const sortedTypes = Array.from(pokemonTypes).sort();
+
+  sortedTypes.forEach((type) => {
+    const sortButton = document.createElement("button");
+    sortButton.textContent = `Sort by ${type}`;
+    sortButton.addEventListener("click", () => {
+      sortPokemonByType(type);
+    });
+    sortOptionsContainer.appendChild(sortButton);
+  });
+}
+
+fetchPokemon().then(() => {
+  generateSortButtons();
 });
